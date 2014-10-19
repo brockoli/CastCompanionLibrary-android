@@ -159,6 +159,7 @@ public class VideoCastManager extends BaseCastManager
     private long mLiveStreamDuration = DEFAULT_LIVE_STREAM_DURATION_MS;
     private long[] mActiveTrackIds;
     private static TracksPreferenceManager mTrackManager;
+    private Bitmap mScreenImage;
 
     /**
      * Initializes the VideoCastManager for clients. Before clients can use VideoCastManager, they
@@ -359,9 +360,19 @@ public class VideoCastManager extends BaseCastManager
         }
     }
 
+    public Bitmap getScreenImage() {
+        return this.mScreenImage;
+    }
+
     /*============================================================================================*/
     /*========== VideoCastControllerActivity management ==========================================*/
     /*============================================================================================*/
+
+    public void startCastControllerActivity(Context context, MediaInfo mediaWrapper, int position,
+                                            boolean shouldStart, Bitmap screenImage) {
+        this.mScreenImage = screenImage;
+        startCastControllerActivity(context, mediaWrapper, position, shouldStart);
+    }
 
     /**
      * Launches the VideoCastControllerActivity that provides a default Cast Player page.

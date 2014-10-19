@@ -523,35 +523,45 @@ public class VideoCastControllerFragment extends Fragment implements OnVideoCast
      * image to avoid unnecessary network calls.
      */
     private void showImage(final Uri url) {
-        if (mImageAsyncTask != null) {
-            mImageAsyncTask.cancel(true);
+        Bitmap screenImage = null;
+        try {
+            screenImage = VideoCastManager.getInstance(getActivity()).getScreenImage();
+        } catch (CastException e) {
+            e.printStackTrace();
         }
-        if (null == url) {
-            mCastController.setImage(BitmapFactory.decodeResource(getActivity().getResources(),
-                    R.drawable.dummy_album_art_large));
-            return;
-        }
-        if (null != mUrlAndBitmap && mUrlAndBitmap.isMatch(url)) {
-            // we can reuse mBitmap
-            mCastController.setImage(mUrlAndBitmap.mBitmap);
-            return;
-        }
-        mUrlAndBitmap = null;
-        mImageAsyncTask = new FetchBitmapTask() {
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                if (null != bitmap) {
-                    mUrlAndBitmap = new UrlAndBitmap();
-                    mUrlAndBitmap.mBitmap = bitmap;
-                    mUrlAndBitmap.mUrl = url;
-                    mCastController.setImage(bitmap);
-                }
-                if (this == mImageAsyncTask) {
-                    mImageAsyncTask = null;
-                }
+        if (screenImage != null) {
+            mCastController.setImage(screenImage);
+        } else {
+            if (mImageAsyncTask != null) {
+                mImageAsyncTask.cancel(true);
             }
-        };
-        mImageAsyncTask.start(url);
+            if (null == url) {
+                mCastController.setImage(BitmapFactory.decodeResource(getActivity().getResources(),
+                        R.drawable.dummy_album_art_large));
+                return;
+            }
+            if (null != mUrlAndBitmap && mUrlAndBitmap.isMatch(url)) {
+                // we can reuse mBitmap
+                mCastController.setImage(mUrlAndBitmap.mBitmap);
+                return;
+            }
+            mUrlAndBitmap = null;
+            mImageAsyncTask = new FetchBitmapTask() {
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    if (null != bitmap) {
+                        mUrlAndBitmap = new UrlAndBitmap();
+                        mUrlAndBitmap.mBitmap = bitmap;
+                        mUrlAndBitmap.mUrl = url;
+                        mCastController.setImage(bitmap);
+                    }
+                    if (this == mImageAsyncTask) {
+                        mImageAsyncTask = null;
+                    }
+                }
+            };
+            mImageAsyncTask.start(url);
+        }
     }
 
     /*
