@@ -330,6 +330,16 @@ public class VideoCastManager extends BaseCastManager
         }
     }
 
+    @Override
+    public void onFFClicked(View v, int duration) throws CastException,
+            TransientNetworkDisconnectionException, NoConnectionException {
+        checkConnectivity();
+        if (mState == MediaStatus.PLAYER_STATE_PLAYING || mState == MediaStatus.PLAYER_STATE_PAUSED) {
+            // FF 2 mins
+            ff(duration);
+        }
+    }
+
     /*
      * (non-Javadoc)
      * @see com.google.sample.castcompanionlibrary.widgets.MiniController.
@@ -1192,6 +1202,19 @@ public class VideoCastManager extends BaseCastManager
     public void play() throws CastException, TransientNetworkDisconnectionException,
             NoConnectionException {
         play(null);
+    }
+
+    public void ff(int duration) throws
+            TransientNetworkDisconnectionException, NoConnectionException {
+        LOGD(TAG, "ff(" + duration + ")");
+        checkConnectivity();
+        if (mRemoteMediaPlayer == null) {
+            LOGE(TAG, "Trying to fast forward a video with no active media session");
+            throw new NoConnectionException();
+        }
+        long currentPos = mRemoteMediaPlayer.getApproximateStreamPosition();
+        long newPos = currentPos + (duration*60*1000);
+        mRemoteMediaPlayer.seek(mApiClient, newPos);
     }
 
     /**

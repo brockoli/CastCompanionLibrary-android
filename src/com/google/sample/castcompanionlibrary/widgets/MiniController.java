@@ -16,6 +16,7 @@
 
 package com.google.sample.castcompanionlibrary.widgets;
 
+import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.sample.castcompanionlibrary.R;
@@ -58,10 +59,14 @@ import android.widget.TextView;
 public class MiniController extends RelativeLayout implements IMiniController {
 
     private static final String TAG = "MiniController";
+    private static final int FF_2MIN = 2;
+    private static final int FF_17MIN = 17;
     protected ImageView mIcon;
     protected TextView mTitle;
     protected TextView mSubTitle;
     protected ImageView mPlayPause;
+    protected ImageView mFFTwoMin;
+    protected ImageView mFFSeventeenMin;
     protected ProgressBar mLoading;
     public static final int PLAYBACK = 1;
     public static final int PAUSE = 2;
@@ -109,6 +114,7 @@ public class MiniController extends RelativeLayout implements IMiniController {
      *
      * @param listener
      */
+    @SuppressWarnings("JavadocReference")
     public void removeOnMiniControllerChangedListener(OnMiniControllerChangedListener listener) {
         if (null != listener && this.mListener == listener) {
             this.mListener = null;
@@ -130,6 +136,40 @@ public class MiniController extends RelativeLayout implements IMiniController {
                     setLoadingVisibility(true);
                     try {
                         mListener.onPlayPauseClicked(v);
+                    } catch (CastException e) {
+                        mListener.onFailed(R.string.failed_perform_action, -1);
+                    } catch (TransientNetworkDisconnectionException e) {
+                        mListener.onFailed(R.string.failed_no_connection_trans, -1);
+                    } catch (NoConnectionException e) {
+                        mListener.onFailed(R.string.failed_no_connection, -1);
+                    }
+                }
+            }
+        });
+
+        mFFTwoMin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (null != mListener) {
+                    try {
+                        mListener.onFFClicked(view, 2);
+                    } catch (CastException e) {
+                        mListener.onFailed(R.string.failed_perform_action, -1);
+                    } catch (TransientNetworkDisconnectionException e) {
+                        mListener.onFailed(R.string.failed_no_connection_trans, -1);
+                    } catch (NoConnectionException e) {
+                        mListener.onFailed(R.string.failed_no_connection, -1);
+                    }
+                }
+            }
+        });
+
+        mFFSeventeenMin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (null != mListener) {
+                    try {
+                        mListener.onFFClicked(view, 17);
                     } catch (CastException e) {
                         mListener.onFailed(R.string.failed_perform_action, -1);
                     } catch (TransientNetworkDisconnectionException e) {
@@ -272,6 +312,8 @@ public class MiniController extends RelativeLayout implements IMiniController {
         mTitle = (TextView) findViewById(R.id.titleView);
         mSubTitle = (TextView) findViewById(R.id.subTitleView);
         mPlayPause = (ImageView) findViewById(R.id.playPauseView);
+        mFFTwoMin = (ImageView) findViewById(R.id.ffTwoMinView);
+        mFFSeventeenMin = (ImageView) findViewById(R.id.ffSeventeenMinView);
         mLoading = (ProgressBar) findViewById(R.id.loadingView);
         mContainer = findViewById(R.id.bigContainer);
     }
@@ -307,6 +349,18 @@ public class MiniController extends RelativeLayout implements IMiniController {
          */
         public void onPlayPauseClicked(View v) throws CastException,
                 TransientNetworkDisconnectionException, NoConnectionException;
+
+        /**
+         * Notification that user has clicked the ff 2min button
+         *
+         * @param v
+         * @throws TransientNetworkDisconnectionException
+         * @throws NoConnectionException
+         * @throws CastException
+         */
+        public void onFFClicked(View v, int duration) throws CastException,
+                TransientNetworkDisconnectionException, NoConnectionException;
+
 
         /**
          * Notification that the user has clicked on the album art

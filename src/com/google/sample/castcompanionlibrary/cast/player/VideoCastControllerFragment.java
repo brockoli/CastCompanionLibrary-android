@@ -656,6 +656,17 @@ public class VideoCastControllerFragment extends Fragment implements OnVideoCast
         togglePlayback();
     }
 
+    @Override
+    public void onFFClicked(View v, int duration) throws CastException,
+            TransientNetworkDisconnectionException, NoConnectionException {
+        LOGD(TAG, "isConnected returning: " + mCastManager.isConnected());
+        if (mPlaybackState == MediaStatus.PLAYER_STATE_PLAYING || mPlaybackState == MediaStatus.PLAYER_STATE_PAUSED) {
+            // FF 2 mins
+            mCastManager.ff(duration);
+        }
+
+    }
+
     private void togglePlayback() throws CastException, TransientNetworkDisconnectionException,
             NoConnectionException {
         switch (mPlaybackState) {

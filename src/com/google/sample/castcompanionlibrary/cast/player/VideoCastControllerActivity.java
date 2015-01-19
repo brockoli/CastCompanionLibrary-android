@@ -68,6 +68,8 @@ public class VideoCastControllerActivity extends ActionBarActivity implements IV
     private static final String TAG = LogUtils.makeLogTag(VideoCastControllerActivity.class);
     private VideoCastManager mCastManager;
     private ImageView mPlayPause;
+    private ImageView mFF2;
+    private ImageView mFF17;
     private TextView mLiveText;
     private TextView mStart;
     private TextView mEnd;
@@ -168,6 +170,8 @@ public class VideoCastControllerActivity extends ActionBarActivity implements IV
         mPlayDrawable = getResources().getDrawable(R.drawable.ic_av_play_dark);
         mStopDrawable = getResources().getDrawable(R.drawable.ic_av_stop_dark);
         mPlayPause = (ImageView) findViewById(R.id.imageView1);
+        mFF2 = (ImageView) findViewById(R.id.ff2View);
+        mFF17 = (ImageView) findViewById(R.id.ff17View);
         mLiveText = (TextView) findViewById(R.id.liveText);
         mStart = (TextView) findViewById(R.id.startText);
         mEnd = (TextView) findViewById(R.id.endText);
@@ -199,7 +203,46 @@ public class VideoCastControllerActivity extends ActionBarActivity implements IV
                 }
             }
         });
-
+        mFF2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    mListener.onFFClicked(view, 2);
+                } catch (CastException e) {
+                    LOGE(TAG, "Failed to cast.", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            "Failed to cast.");
+                } catch (TransientNetworkDisconnectionException e) {
+                    LOGE(TAG, "Failed to toggle playback due to temporary network issue", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            R.string.failed_no_connection_trans);
+                } catch (NoConnectionException e) {
+                    LOGE(TAG, "Failed to toggle playback due to network issues", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            R.string.failed_no_connection);
+                }
+            }
+        });
+        mFF17.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    mListener.onFFClicked(view, 17);
+                } catch (CastException e) {
+                    LOGE(TAG, "Failed to cast.", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            "Failed to cast.");
+                } catch (TransientNetworkDisconnectionException e) {
+                    LOGE(TAG, "Failed to toggle playback due to temporary network issue", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            R.string.failed_no_connection_trans);
+                } catch (NoConnectionException e) {
+                    LOGE(TAG, "Failed to toggle playback due to network issues", e);
+                    Utils.showErrorDialog(VideoCastControllerActivity.this,
+                            R.string.failed_no_connection);
+                }
+            }
+        });
         mSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override

@@ -65,6 +65,8 @@ public interface OnVideoCastControllerListener extends TracksChooserDialog.OnTra
     public void onPlayPauseClicked(View v) throws CastException,
             TransientNetworkDisconnectionException, NoConnectionException;
 
+    public void onFFClicked(View v, int duration) throws CastException,
+            TransientNetworkDisconnectionException, NoConnectionException;
     /**
      * Called when a configuration change happens (for example device is rotated)
      */
